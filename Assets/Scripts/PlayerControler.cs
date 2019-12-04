@@ -10,14 +10,23 @@ public class PlayerControler : MonoBehaviour
     BoxCollider2D boxCollider2d;
 
     [SerializeField]
-    float speed = 3f;
+    float speed = 2f;
     [SerializeField]
-    float jumpVelocity = 6f;
+    float jumpVelocity = 3f;
     [SerializeField] int Bunny;
 
     bool facingRight;
     Vector2 direction;
 
+    bool Finished = false;
+
+    enum state
+    {
+        START,
+        PLAY,
+        PAUSE,
+        Finish
+    }
 
     void Start()
     {
@@ -25,20 +34,24 @@ public class PlayerControler : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
     }
 
-    private void FixedUpdate()
+    void FixedUpdate()
     {
         float horizontal = Input.GetAxis("Horizontal");
         body.velocity = direction;
         Flip(horizontal);
+        if (Finished)
+        {
+            Vector2 direction = new Vector2(-1, 0);
+            body.velocity = direction * speed;
+        }
     }
     void Awake()
     {
-        boxCollider2d = transform.GetComponent<BoxCollider2D>();
+       boxCollider2d = transform.GetComponent<BoxCollider2D>();
     }
     bool IsGrounded()
     {
-        RaycastHit2D raycastHit2d = Physics2D.BoxCast(boxCollider2d.bounds.center, boxCollider2d.bounds.size, 0f, Vector2.down, 0.1f, layerMask);
-        Debug.Log(raycastHit2d.collider);
+        RaycastHit2D raycastHit2d = Physics2D.BoxCast(boxCollider2d.bounds.center, boxCollider2d.bounds.size, 0f, Vector2.down, 0.2f, layerMask);
         return raycastHit2d.collider != null;
     }
     void Update()
@@ -63,5 +76,19 @@ public class PlayerControler : MonoBehaviour
     {
         Bunny += value;
         Debug.Log("Money");
+    }
+    void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.tag == "Finish" && Bunny >= 3)
+        {
+            Finished = true;
+            finishGame();
+        }
+    }
+    void finishGame()
+    {
+        Debug.Log("Finish");
+        Destroy(gameObject, 1);
+        // Launch Credits
     }
 }

@@ -7,7 +7,7 @@ public class CameraFollowing : MonoBehaviour
     [SerializeField]
     float zValue = -10;
 
-    [SerializeField] Transform target_;
+    [SerializeField] Transform target_ = default;
 
     [SerializeField] bool doLerp = false;
 
@@ -19,7 +19,11 @@ public class CameraFollowing : MonoBehaviour
     {
         if (doLerp)
         {
-            transform.position = Vector3.Lerp(transform.position, new Vector3(target_.position.x, 0, zValue), 0f);
+            transform.position = Vector3.Lerp(transform.position, new Vector3(target_.position.x, 0, zValue), 0f);           
+        }
+        if (target_ == null)
+        {
+            transform.position = new Vector3(0, 0, zValue);
         }
         else
         {

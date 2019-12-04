@@ -9,11 +9,10 @@ public class MovingAnimals : MonoBehaviour
     [Range(0, 5)] float floatingDistance = 1;
     [SerializeField]
     int value = 1;
-    int directionX = 1;
 
     Vector3 originalPosition;
 
-    [SerializeField] AnimationCurve animationCurve_;
+    [SerializeField] AnimationCurve animationCurve_ = default;
 
     bool facingRight;
     float PosX;
@@ -29,9 +28,6 @@ public class MovingAnimals : MonoBehaviour
         transform.position = new Vector3(originalPosition.x + offsetX * floatingDistance, originalPosition.y);
         Flip(offsetX, PosX);
         PosX = offsetX;
-        /*Vector3 theScale = transform.localScale;
-        theScale.x *= -1;
-        transform.localScale = theScale;*/
     }
     
     void Flip(float offsetX, float oldX_)
@@ -49,7 +45,7 @@ public class MovingAnimals : MonoBehaviour
             transform.localScale = theScale;
         }
     }
-    private void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         if (other.gameObject.tag == "Player")
         {

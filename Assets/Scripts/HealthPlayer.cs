@@ -29,7 +29,7 @@ public class HealthPlayer : MonoBehaviour
 
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.tag == "OutMap")
         {
@@ -47,7 +47,7 @@ public class HealthPlayer : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void Respawn()
+    void Respawn()
     {
         this.transform.position = Spawnpoint.position;
     }
