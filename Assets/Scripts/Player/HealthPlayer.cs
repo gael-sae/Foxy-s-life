@@ -7,7 +7,7 @@ public class HealthPlayer : MonoBehaviour
 {
     [SerializeField]
     int maxHealth = 3;
-    public int currentHealth = 3;
+    int currentHealth = 3;
 
     public Image[] heart;
     public Sprite fullHeart;

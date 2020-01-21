@@ -16,16 +16,16 @@ public class MenuPanelGame : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Escape) && Pause)
+        if (Input.GetKeyDown(KeyCode.Escape) & Pause)
         {
-            panelPause.SetActive(false);
             Pause = false;
+            panelPause.SetActive(false);
         }
 
-        if (Input.GetKeyDown(KeyCode.P) && !Pause)
+        else if (Input.GetKeyDown(KeyCode.Escape) & !Pause)
         {
-            panelPause.SetActive(true);
             Pause = true;
+            panelPause.SetActive(true);
         }
     }
 

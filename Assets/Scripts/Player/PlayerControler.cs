@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControler : MonoBehaviour
 {
     Rigidbody2D body;
     BoxCollider2D boxCollider2d;
-    [SerializeField] GameObject panelVictory;
+    [SerializeField] 
+    GameObject panelVictory;
 
     [SerializeField]
     float speed = 2f;
@@ -14,7 +16,7 @@ public class PlayerControler : MonoBehaviour
     [SerializeField]
     float jumpVelocity = 4f;
     [SerializeField]
-    int Bunny;
+    int bunnyCatch = 0;
     [SerializeField]
     int BunnyMinim = 3;
 
@@ -22,18 +24,28 @@ public class PlayerControler : MonoBehaviour
     Vector2 direction;
 
     bool Win = false;
-    bool Idle = false;
+    bool Idle = true;
+    bool jumpUP = false;
 
-    [SerializeField]int Platform = 0;
+    [SerializeField]
+    int Platform = 0;
+
     float DestroyTime = 0.4f;
     float Marge = 0.1f;
     int layerPlayer = 10;
     int layerWinObject = 9;
 
+    Animator animator_;
+
+    public Image[] bunny;
+    public Sprite fullBunny;
+    public Sprite emptyBunny;
+    [SerializeField]
+    int maxBunny = 5;
+
     enum State
     {
         PLAY,
-        PAUSE,
         WINGAME,
     }
     State state = State.PLAY;
@@ -44,6 +56,8 @@ public class PlayerControler : MonoBehaviour
         body = GetComponent<Rigidbody2D>();
         boxCollider2d = transform.GetComponent<BoxCollider2D>();
         panelVictory.SetActive(false);
+        animator_ = GetComponentInChildren<Animator>();
+        state = State.PLAY;
     }
 
     void FixedUpdate()
@@ -53,31 +67,62 @@ public class PlayerControler : MonoBehaviour
   
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            if (Time.timeScale == 1 & !Idle)
+            {
+                Time.timeScale = 0;
+                Idle = true;
+            }
+            else
+            {
+                Time.timeScale = 1;
+                Idle = false;
+            }
+        }
+
+
+
+        for (int i = 0; i < bunny.Length; i++)
+        {
+            if (i < bunnyCatch)
+            {
+                bunny[i].sprite = fullBunny;
+            }
+            else
+            {
+                bunny[i].sprite = emptyBunny;
+            }
+            if (i < maxBunny)
+            {
+                bunny[i].enabled = true;
+            }
+            else
+            {
+                bunny[i].enabled = false;
+            }
+        }
+
         switch (state)
         {
             case State.PLAY:
-
+                UpdateAnimation();
                 float horizontal = Input.GetAxis("Horizontal");
                 Flip(horizontal);
                 direction = new Vector2(horizontal * speed, body.velocity.y);
 
-                if (Platform > 0 && Input.GetAxis("Jump") > Marge && !Win && Mathf.Abs(body.velocity.y) <= Marge)
+                if (Platform > 0 && Input.GetAxis("Jump") > Marge && !Win && Mathf.Abs(body.velocity.y) <= Marge & !jumpUP)
                 {
+                    Debug.Log("button down");
                     direction = Vector2.up * jumpVelocity;
+                    jumpUP = true;
+                }
+                if (Input.GetKeyUp(KeyCode.Space) || Input.GetKeyUp(KeyCode.UpArrow))
+                {
+                    Debug.Log("button up");
+                    jumpUP = false;
                 }
 
-                if (Input.GetKeyDown(KeyCode.P))
-                {
-                    Idle = true;
-                    state = State.PAUSE;
-                }
-                break;
-            case State.PAUSE:
-                    if (Input.GetKeyDown(KeyCode.Escape))
-                    {
-                        Idle = false;
-                        state = State.PLAY;
-                    }
                 break;
             case State.WINGAME:
                         direction = new Vector2(-1, 0) * speed;
@@ -85,12 +130,13 @@ public class PlayerControler : MonoBehaviour
                     if (transform.position.x <= -5.7)
                     {
                     speed = runStop;
-                    Destroy(gameObject, DestroyTime);
                     }
                 break;
         }
-
-       
+    }
+    void UpdateAnimation()
+    {
+        animator_.SetFloat("speed", Mathf.Abs(body.velocity.x));
     }
     void Flip(float horizontal)
     {
@@ -104,11 +150,11 @@ public class PlayerControler : MonoBehaviour
     }
     public void AddBunny(int value)
     {
-        Bunny += value;
+        bunnyCatch += value;
     }
     void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.gameObject.tag == "WinObject" && Bunny >= BunnyMinim)
+        if (other.gameObject.tag == "WinObject" && bunnyCatch >= BunnyMinim)
         {
             Win = true;
             state = State.WINGAME;
@@ -130,8 +176,5 @@ public class PlayerControler : MonoBehaviour
         {
             Platform++;
         }
-    }
-    void WinGame()
-    {
     }
 }

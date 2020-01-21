@@ -16,9 +16,8 @@ public class MenuManager : MonoBehaviour
         
     }
 
-    public void LoadScene(string sceneName) {
-        Debug.Log("Load scene");
-
+    public void LoadScene(string sceneName) 
+    {
         SceneManager.LoadScene(sceneName);
     }
 
