@@ -30,7 +30,6 @@ public class PlayerControler : MonoBehaviour
     [SerializeField]
     int Platform = 0;
 
-    float DestroyTime = 0.4f;
     float Marge = 0.1f;
     int layerPlayer = 10;
     int layerWinObject = 9;
@@ -42,6 +41,8 @@ public class PlayerControler : MonoBehaviour
     public Sprite emptyBunny;
     [SerializeField]
     int maxBunny = 5;
+    private SpriteRenderer sprite;
+    int sortingOrder = 0;
 
     enum State
     {
@@ -58,6 +59,7 @@ public class PlayerControler : MonoBehaviour
         panelVictory.SetActive(false);
         animator_ = GetComponentInChildren<Animator>();
         state = State.PLAY;
+        sprite = GetComponent<SpriteRenderer>();
     }
 
     void FixedUpdate()
@@ -130,7 +132,8 @@ public class PlayerControler : MonoBehaviour
                     if (transform.position.x <= -5.7)
                     {
                     speed = runStop;
-                    }
+                    sprite.sortingOrder = sortingOrder;
+                }
                 break;
         }
     }

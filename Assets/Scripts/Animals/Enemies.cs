@@ -18,6 +18,8 @@ public class Enemies : MonoBehaviour
     public bool Idle = true;
     float PosX;
 
+    Animator animator_;
+
 
     enum State
     {
@@ -39,6 +41,7 @@ public class Enemies : MonoBehaviour
         leftTarget = transform.position + leftOffset;
         rightTarget = transform.position + rightOffset;
         enemie = GetComponent<Rigidbody2D>();
+        animator_ = GetComponentInChildren<Animator>();
     }
 
     void Update()
@@ -50,6 +53,7 @@ public class Enemies : MonoBehaviour
                 
                          break;
             case State.PATROLLE:
+                UpdateAnimation();
                 if (isGoingRight)
                 {
                     Vector3 velocity = (rightTarget - transform.position).normalized * speed;
@@ -80,6 +84,7 @@ public class Enemies : MonoBehaviour
                 break;
             case State.CHASE_PLAYER:
                 {
+                    UpdateAnimation();
                     Vector3 velocity = (targetChase.position - transform.position).normalized * speedChase;
                     velocity = new Vector3(velocity.x, enemie.velocity.y, ignorePos);
 
@@ -96,9 +101,12 @@ public class Enemies : MonoBehaviour
                 }
                 break;
         }
-
-
     }
+    void UpdateAnimation()
+    {
+        animator_.SetFloat("speedChase", Mathf.Abs(enemie.velocity.x));
+    }
+
     void Flip(float velocity, float oldX_)
     {
         if (velocity > oldX_)
